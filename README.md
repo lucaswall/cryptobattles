@@ -17,9 +17,12 @@ This work is licensed under the Creative Commons Attribution-NonCommercial-Share
 
 # ToDo
 
+* Balance the game! I need a game designer.
+* Make better random. Current random is not secure, but good enough for testing.
+* Find better way to get all, or some, players. Current solution does not scale.
 * Make page work only on Rinkeby test network. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#construction_worker-network-check
 * Modify the number of troops generated in a tx by a factor of the number of blocks passed since last generation.
 ** Min blocks need to pass or it generates 0 troops.
 ** Max blocks to cap to max troop generation, no extra troops after max block distance.
-* Set ether prices for troop generation and attack
+* Set ether prices for troop generation and attack?
 * Limit attacks to a minimum of block distance.

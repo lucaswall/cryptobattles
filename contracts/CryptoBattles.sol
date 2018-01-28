@@ -9,6 +9,7 @@ contract CryptoBattles {
 
 
 	event TroopsEnlisted(address owner, uint orcs, uint elves, uint giants);
+	event Attacked(address atttacker, address defender);
 
 	function enlistTroops() public {
 		generateTroops(msg.sender);
@@ -22,15 +23,21 @@ contract CryptoBattles {
 		return (armies[owner].orcs, armies[owner].elves, armies[owner].giants);
 	}
 
+	function getPlayers() public constant returns(address[]) {
+		return players;
+	}
+
 
 
 	struct Army {
+		bool exists;
 		uint orcs;
 		uint elves;
 		uint giants;
 	}
 
 	mapping(address => Army) private armies;
+	address[] private players;
 
 	function generateTroops(address owner) private {
 		uint orcs = random(0xff, 0) / generationDividerOrcs;
@@ -39,6 +46,10 @@ contract CryptoBattles {
 		armies[owner].orcs += orcs;
 		armies[owner].elves += elves;
 		armies[owner].giants += giants;
+		if (!armies[owner].exists) {
+			players.push(owner);
+		}
+		armies[owner].exists = true;
 		TroopsEnlisted(owner, orcs, elves, giants);
 	}
 
@@ -48,7 +59,51 @@ contract CryptoBattles {
 	}
 
 	function resolveAttack(address attacker, address defender) private {
+		phaseAttack(attacker, defender);
+		phaseDefend(attacker, defender);
+		Attacked(attacker, defender);
+	}
 
+	function phaseDefend(address attacker, address defender) private {
+		killOrcs(attacker, armies[defender].elves * 3);
+		killElves(attacker, armies[defender].giants * 2);
+		killGiants(attacker, armies[defender].orcs / 5);
+	}
+
+	function phaseAttack(address attacker, address defender) private {
+		killOrcs(defender, armies[attacker].elves * 2);
+		killElves(defender, armies[attacker].giants / 2);
+		killGiants(defender, armies[attacker].orcs / 7);
+	}
+
+	function killOrcs(address owner, uint count) private {
+		if (count < 0 ) {
+			count = 0;
+		}
+		if (count > armies[owner].orcs ) {
+			count = armies[owner].orcs;
+		}
+		armies[owner].orcs -= count;
+	}
+
+	function killElves(address owner, uint count) private {
+		if (count < 0 ) {
+			count = 0;
+		}
+		if (count > armies[owner].elves ) {
+			count = armies[owner].elves;
+		}
+		armies[owner].elves -= count;
+	}
+
+	function killGiants(address owner, uint count) private {
+		if (count < 0 ) {
+			count = 0;
+		}
+		if (count > armies[owner].giants ) {
+			count = armies[owner].giants;
+		}
+		armies[owner].giants -= count;
 	}
 
 }

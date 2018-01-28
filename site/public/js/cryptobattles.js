@@ -5,8 +5,8 @@ var web3js;
 var contractInstance;
 var accountAddress;
 
-var contractAddress = '0x487c86fab46a99ffb40b54c96079046c9814ef2d';
-var contractAbi = [{"constant":true,"inputs":[{"name":"owner","type":"address"}],"name":"getArmySize","outputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"enlistTroops","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"target","type":"address"}],"name":"attack","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"orcs","type":"uint256"},{"indexed":false,"name":"elves","type":"uint256"},{"indexed":false,"name":"giants","type":"uint256"}],"name":"TroopsEnlisted","type":"event"}];
+var contractAddress = '0x2714d0b96c580ea170170343c4f3f7d3b8d5472b';
+var contractAbi = [{"constant":true,"inputs":[{"name":"owner","type":"address"}],"name":"getArmySize","outputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getPlayers","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"enlistTroops","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"target","type":"address"}],"name":"attack","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"orcs","type":"uint256"},{"indexed":false,"name":"elves","type":"uint256"},{"indexed":false,"name":"giants","type":"uint256"}],"name":"TroopsEnlisted","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"atttacker","type":"address"},{"indexed":false,"name":"defender","type":"address"}],"name":"Attacked","type":"event"}];
 
 function updateProfile() {
 	console.log('updating profile data');
@@ -43,14 +43,87 @@ function trackEnlistTransaction(err, result) {
 	}
 	console.log('enlist transaction ' + result.hash + ' no longer pending');
 	updateProfile();
+	updatePlayerList();
 	$('#infoStatus').text('');
 	$('#statusSection').collapse('hide');
 	$('#runEnlist').prop('disabled', false);
+	$('#runAttack').prop('disabled', false);
+}
+
+function trackAttackTransaction(err, result) {
+	if (err) { console.error(err); return; }
+	if (!result.blockNumber) {
+		web3js.eth.getTransaction(result.hash, trackAttackTransaction);
+		return;
+	}
+	console.log('attack transaction ' + result.hash + ' no longer pending');
+	updateProfile();
+	updatePlayerList();
+	$('#infoStatus').text('');
+	$('#statusSection').collapse('hide');
+	$('#runEnlist').prop('disabled', false);
+	$('#runAttack').prop('disabled', false);
+}
+
+var players = [];
+var playersIdx = 0;
+
+function addPlayerInfo(err, result) {
+	if (err) { console.error(err); return; }
+	var countOrcs = result[0];
+	var countElves = result[1];
+	var countGiants = result[2];
+	var targetPlayer = players[playersIdx];
+	$('#playerList').append('<tr><td>'+targetPlayer+'</td><td>'+countOrcs+'</td><td>'+countElves+'</td><td>'+countGiants+'</td><td><button class="btn btn-primary" id="attack'+targetPlayer+'">ATTACK</button></td></tr>')
+	$('#attack'+players[playersIdx]).click(function(event) {
+		attackPlayer(targetPlayer);
+	});
+	playersIdx++;
+	if (playersIdx < players.length) {
+		contractInstance.getArmySize(players[playersIdx], addPlayerInfo);
+	}
+}
+
+function updatePlayerList() {
+	$('#playerList').empty();
+	contractInstance.getPlayers(function(err, result) {
+		if (err) { console.error(err); return; }
+		players = result;
+		if (players.length > 0) {
+			playersIdx = 0;
+			contractInstance.getArmySize(players[0], addPlayerInfo);
+		}
+	});
+}
+
+function attackPlayer(attackTarget) {
+	if (attackTarget == accountAddress) {
+		console.warn('should not attack self');
+		return;
+	}
+	console.log('run attack on ' + attackTarget);
+	$('#attackTarget').val(attackTarget);
+	var callData = contractInstance.attack.getData(attackTarget);
+	var params = {
+		to: contractAddress,
+		from: accountAddress,
+		data: callData,
+	};
+	web3js.eth.sendTransaction(params, function(err, result) {
+		if (err) { console.error(err); return; }
+		console.log('attack tx ' + result);
+		$('#infoStatus').html('Attacking '+attackTarget+' [<a target="_blank" href="https://rinkeby.etherscan.io/tx/' + result + '">' + result + '</a>]');
+		$('#statusSection').collapse('show');
+		$('#runEnlist').prop('disabled', true);
+		$('#runAttack').prop('disabled', true);
+		web3js.eth.getTransaction(result, trackEnlistTransaction);
+	});
 }
 
 $('#runRefresh').click(function(event) {
 	console.log('run refresh');
 	updateProfile();
+	updatePlayerList();
 });
 
 $('#runEnlist').click(function(event) {
@@ -71,6 +144,11 @@ $('#runEnlist').click(function(event) {
 	});
 });
 
+$('#runAttack').click(function(event) {
+	var attackTarget = $('#attackTarget').val();
+	attackPlayer(attackTarget);
+});
+
 $(window).on('load', function() {
 	console.log("loaded!");
 	connectToNode();
@@ -79,11 +157,19 @@ $(window).on('load', function() {
 	accountAddress = web3js.eth.accounts[0];
 	createContractInstance();
 	updateProfile();
+	updatePlayerList();
 	contractInstance.TroopsEnlisted(function(err, result) {
 		if (err) { console.error(err); return; }
 		console.log(result);
 		updateProfile();
 	});
+	var accountInterval = setInterval(function() {
+		if (web3.eth.accounts[0] !== accountAddress) {
+			accountAddress = web3.eth.accounts[0];
+			$('#attackTarget').val('');
+			updateProfile();
+		}
+	}, 100);
 });
 
 })(jQuery);
