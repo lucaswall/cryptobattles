@@ -5,7 +5,7 @@ var web3js;
 var contractInstance;
 var accountAddress;
 
-var contractAddress = '0x2714d0b96c580ea170170343c4f3f7d3b8d5472b';
+var contractAddress = '0x23cecc6f1261dcc6247f11148c4bc84585915c5f';
 var contractAbi = [{"constant":true,"inputs":[{"name":"owner","type":"address"}],"name":"getArmySize","outputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getPlayers","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"enlistTroops","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"target","type":"address"}],"name":"attack","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"orcs","type":"uint256"},{"indexed":false,"name":"elves","type":"uint256"},{"indexed":false,"name":"giants","type":"uint256"}],"name":"TroopsEnlisted","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"atttacker","type":"address"},{"indexed":false,"name":"defender","type":"address"}],"name":"Attacked","type":"event"}];
 
 function updateProfile() {

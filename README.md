@@ -16,7 +16,7 @@ Players must have an installed ether wallet in theeir browsers and load the game
 
 Development and testing was done with MetaMask. https://metamask.io/
 
-*WARNING!* Do not use this game in the real ethereum blockchain, the smart contract is currently
+**WARNING!** Do not use this game in the real ethereum blockchain, the smart contract is currently
 installed in the Rinkeby testnet network. https://www.rinkeby.io
 
 Refere to the MetaMask documentation on how to create a wallet on Rinkeby network and visit the
@@ -26,7 +26,7 @@ Do not send ether to the smart contact, it runs entirely on gas.
 
 Live site: https://lucaswall.github.io/cryptobattles/
 
-Smart contract address: 0x2714d0b96c580ea170170343c4f3f7d3b8d5472b
+Smart contract address: 0x23cecc6f1261dcc6247f11148c4bc84585915c5f
 
 Github repository: https://github.com/lucaswall/cryptobattles
 

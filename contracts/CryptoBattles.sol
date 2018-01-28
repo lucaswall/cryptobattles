@@ -71,9 +71,9 @@ contract CryptoBattles {
 	}
 
 	function phaseAttack(address attacker, address defender) private {
-		killOrcs(defender, armies[attacker].elves * 2);
-		killElves(defender, armies[attacker].giants / 2);
-		killGiants(defender, armies[attacker].orcs / 7);
+		killOrcs(defender, armies[attacker].elves * 3);
+		killElves(defender, armies[attacker].giants * 2);
+		killGiants(defender, armies[attacker].orcs / 5);
 	}
 
 	function killOrcs(address owner, uint count) private {
