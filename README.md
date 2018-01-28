@@ -31,6 +31,29 @@ Smart contract address: 0x23cecc6f1261dcc6247f11148c4bc84585915c5f
 Github repository: https://github.com/lucaswall/cryptobattles
 
 
+# How to play
+
+Install MetaMask plugin in your browser. https://metamask.io/
+
+From the MetaMask plugin menu create a new account.
+
+From the top left corner of the MetaMask menu switch from the Main Network to the Rinkeby Test Network.
+
+Follow the instruction on the Rinkeby site to get test ether. https://www.rinkeby.io/#faucet
+
+Now reload the game site and you should be able to play.
+
+Press Enlist Troops to get a random amount of each type of troops.
+
+When you are ready Attack another player. 
+
+Certain types of troops have dominance over other type of troops.
+
+Defender always has the advantage.
+
+Obliterate all other armies and conquer the land.
+
+
 # Authors
 
 Copyright 2018(c)
@@ -42,13 +65,10 @@ This work is licensed under the Creative Commons Attribution-NonCommercial-Share
 
 # ToDo
 
-* Balance the game! I need a game designer.
 * Make better random. Current random is not secure, but good enough for testing.
 * Find better way to get all, or some, players. Current solution does not scale.
-* Make page work only on Rinkeby test network. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#construction_worker-network-check
-* Detect missing MetaMask and display an error.
 * Modify the number of troops generated in a tx by a factor of the number of blocks passed since last generation.
 	* Min blocks need to pass or it generates 0 troops.
 	* Max blocks to cap to max troop generation, no extra troops after max block distance.
-* Set ether prices for troop generation and attack?
-* Limit attacks to a minimum of block distance.
+* Set ether prices for troop generation and attack???
+* Limit attacks to a minimum of block distance. Similar to troop generation idea.

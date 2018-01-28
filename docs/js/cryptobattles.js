@@ -140,6 +140,7 @@ $('#runEnlist').click(function(event) {
 		$('#infoStatus').html('Enlisting troops [<a target="_blank" href="https://rinkeby.etherscan.io/tx/' + result + '">' + result + '</a>]');
 		$('#statusSection').collapse('show');
 		$('#runEnlist').prop('disabled', true);
+		$('#runAttack').prop('disabled', true);
 		web3js.eth.getTransaction(result, trackEnlistTransaction);
 	});
 });
@@ -149,11 +150,36 @@ $('#runAttack').click(function(event) {
 	attackPlayer(attackTarget);
 });
 
+function checkForTestNet() {
+	if (web3js.version.network != 4) {
+		console.error('not in test network! Abort!');
+		$('#noTestNetSection').collapse('show');
+		$('#runRefresh').prop('disabled', true);
+		$('#runEnlist').prop('disabled', true);
+		$('#runAttack').prop('disabled', true);
+		return false;
+	}
+	$('#noTestNetSection').collapse('hide');
+	$('#runRefresh').prop('disabled', false);
+	$('#runEnlist').prop('disabled', false);
+	$('#runAttack').prop('disabled', false);
+	return true;
+}
+
 $(window).on('load', function() {
 	console.log("loaded!");
 	connectToNode();
 	console.log('connected to node is ' + web3js.isConnected());
+	if (!web3js.isConnected()) {
+		console.error('no access to ether node! Abort!');
+		$('#noEthNodeSection').collapse('show');
+		$('#runRefresh').prop('disabled', true);
+		$('#runEnlist').prop('disabled', true);
+		$('#runAttack').prop('disabled', true);
+		return;
+	}
 	console.log('running on network ' + web3js.version.network);
+	if (!checkForTestNet()) return;
 	accountAddress = web3js.eth.accounts[0];
 	createContractInstance();
 	updateProfile();
@@ -167,6 +193,7 @@ $(window).on('load', function() {
 		if (web3.eth.accounts[0] !== accountAddress) {
 			accountAddress = web3.eth.accounts[0];
 			$('#attackTarget').val('');
+			if (!checkForTestNet()) return;
 			updateProfile();
 		}
 	}, 100);
