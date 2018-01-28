@@ -6,6 +6,23 @@ A game made for the Global Game Jam 2018. http://globalgamejam.org/
 A game running on the Ethereum block chain where you enlist troops and atack other players.
 
 
+# About
+
+This game works with a smart contact deployed on the ethereum blockchain.
+
+This game is a quick hack and a proof of concept.
+
+Players must have an installed ether wallet in theeir browsers and load the game site.
+
+Development and testing was done with MetaMask. https://metamask.io/
+
+WARNNING! Do not use this game in the real ethereum blockchain, the smart contract is currently
+installed in the Rinkeby testnet network. https://www.rinkeby.io
+
+Refere to the MetaMask documentation on how to create a wallet on Rinkeby network and visit the
+Rinkeby site to get test ethereum for your test wallet.
+
+Do not send ether to the smart contact, it runs entirely on gas.
 
 
 # Authors
