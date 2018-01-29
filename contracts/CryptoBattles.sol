@@ -7,15 +7,23 @@ contract CryptoBattles {
 	uint constant generationDividerElves = 3;
 	uint constant generationDividerGiants = 5;
 
+	uint constant minEnlistTime = 5 minutes;
+	uint constant minAttackTime = 1 minutes;
+
+	uint constant minEnlistBlocks = minEnlistTime / 15 seconds;
+	uint constant minAttackBlocks = minAttackTime / 15 seconds;
+
 
 	event TroopsEnlisted(address owner, uint orcs, uint elves, uint giants);
 	event Attacked(address atttacker, address defender);
 
 	function enlistTroops() public {
+		require(block.number - armies[msg.sender].lastEnlistBlk >= minEnlistBlocks);
 		generateTroops(msg.sender);
 	}
 
 	function attack(address target) public {
+		require(block.number - armies[msg.sender].lastAttackBlk >= minAttackBlocks);
 		resolveAttack(msg.sender, target);
 	}
 
@@ -27,6 +35,22 @@ contract CryptoBattles {
 		return players;
 	}
 
+	function getMinEnlistBlocks() public pure returns(uint) {
+		return minEnlistBlocks;
+	}
+
+	function getMinAttackBlocks() public pure returns(uint) {
+		return minAttackBlocks;
+	}
+
+	function getLastEnlistBlock() public constant returns(uint) {
+		return armies[msg.sender].lastEnlistBlk;
+	}
+
+	function getLastAttackBlock() public constant returns(uint) {
+		return armies[msg.sender].lastAttackBlk;
+	}
+
 
 
 	struct Army {
@@ -34,12 +58,15 @@ contract CryptoBattles {
 		uint orcs;
 		uint elves;
 		uint giants;
+		uint lastEnlistBlk;
+		uint lastAttackBlk;
 	}
 
 	mapping(address => Army) private armies;
 	address[] private players;
 
 	function generateTroops(address owner) private {
+		armies[owner].lastEnlistBlk = block.number;
 		uint orcs = random(0xff, 0) / generationDividerOrcs;
 		uint elves = random(0xff, 1) / generationDividerElves;
 		uint giants = random(0xff, 2) / generationDividerGiants;
@@ -59,6 +86,7 @@ contract CryptoBattles {
 	}
 
 	function resolveAttack(address attacker, address defender) private {
+		armies[attacker].lastAttackBlk = block.number;
 		phaseAttack(attacker, defender);
 		phaseDefend(attacker, defender);
 		Attacked(attacker, defender);
