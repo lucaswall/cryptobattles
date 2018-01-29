@@ -26,7 +26,7 @@ Do not send ether to the smart contact, it runs entirely on gas.
 
 Live site: https://lucaswall.github.io/cryptobattles/
 
-Smart contract address: 0x23cecc6f1261dcc6247f11148c4bc84585915c5f
+Smart contract address: 0xbc312b746fb75837cfb31fb5e21ae17ded7a4c75
 
 Github repository: https://github.com/lucaswall/cryptobattles
 
